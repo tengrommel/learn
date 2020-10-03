@@ -5,7 +5,8 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 tf.random.set_seed(2345)
 
-conv_layers = [ # 5 units of conv + max pooling
+conv_layers = [
+    # 5 units of conv + max pooling
     # unit 1
     layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(64, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
@@ -30,7 +31,6 @@ conv_layers = [ # 5 units of conv + max pooling
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.Conv2D(512, kernel_size=[3, 3], padding="same", activation=tf.nn.relu),
     layers.MaxPool2D(pool_size=[2, 2], strides=2, padding='same')
-
 ]
 
 
@@ -62,26 +62,20 @@ def main():
 
     # [b, 32, 32, 3] => [b, 1, 1, 512]
     conv_net = Sequential(conv_layers)
-
     fc_net = Sequential([
         layers.Dense(256, activation=tf.nn.relu),
         layers.Dense(128, activation=tf.nn.relu),
         layers.Dense(10, activation=None),
     ])
-
     conv_net.build(input_shape=[None, 32, 32, 3])
     fc_net.build(input_shape=[None, 512])
     conv_net.summary()
     fc_net.summary()
     optimizer = optimizers.Adam(lr=1e-4)
-
     # [1, 2] + [3, 4] => [1, 2, 3, 4]
     variables = conv_net.trainable_variables + fc_net.trainable_variables
-
     for epoch in range(50):
-
         for step, (x, y) in enumerate(train_db):
-
             with tf.GradientTape() as tape:
                 # [b, 32, 32, 3] => [b, 1, 1, 512]
                 out = conv_net(x)
@@ -94,10 +88,8 @@ def main():
                 # compute loss
                 loss = tf.losses.categorical_crossentropy(y_onehot, logits, from_logits=True)
                 loss = tf.reduce_mean(loss)
-
             grads = tape.gradient(loss, variables)
             optimizer.apply_gradients(zip(grads, variables))
-
             if step %100 == 0:
                 print(epoch, step, 'loss:', float(loss))
         total_num = 0
