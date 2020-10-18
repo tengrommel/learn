@@ -8,3 +8,4 @@
 
 后向最大匹配(backward-max matching)
 
+# 词性 
