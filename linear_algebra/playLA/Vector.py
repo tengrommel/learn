@@ -2,6 +2,15 @@ class Vector:
     def __init__(self, lst):
         self._values = list(lst)
 
+    @classmethod
+    def zero(cls, dim):
+        """
+        返回一个dim维的零向量
+        :param dim:
+        :return:
+        """
+        return cls([0]*dim)
+
     def __sub__(self, another):
         """
         向量减法，返回结果向量
@@ -31,6 +40,20 @@ class Vector:
         :return:
         """
         return Vector([k * e for e in self])
+
+    def __pos__(self):
+        """
+        返回向量取正的结果向量
+        :return:
+        """
+        return 1 * self
+
+    def __neg__(self):
+        """
+        返回向量取负的结果向量
+        :return:
+        """
+        return -1 * self
 
     def __iter__(self):
         """

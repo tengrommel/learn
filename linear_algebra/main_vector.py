@@ -10,3 +10,8 @@ if __name__ == '__main__':
     print("{} - {} = {}".format(vec, vec2, vec - vec2))
     print("{} * {} = {}".format(vec, 3, vec * 3))
     print("{} * {} = {}".format(vec, 3, 3 * vec))
+    print("-{} = {}".format(vec, -vec))
+    print("+{} = {}".format(vec, +vec))
+    zero2 = Vector.zero(2)
+    print(zero2)
+    print("{} + {} = {}".format(vec, zero2, vec+zero2))
