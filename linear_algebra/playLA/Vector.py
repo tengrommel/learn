@@ -45,6 +45,11 @@ class Vector:
         """
         return Vector([k * e for e in self])
 
+    def dot(self, another):
+        """向量点乘"""
+        assert len(self) == len(another), "Error in dot product. Length of vectors must be same."
+        return Vector([a * b for a, b in zip(self, another)])
+
     def __truediv__(self, k):
         """返回数量除法的结果向量"""
         return (1/k) * self
