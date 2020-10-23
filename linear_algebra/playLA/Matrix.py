@@ -10,6 +10,10 @@ class Matrix:
         """返回一个r行c列的零矩阵"""
         return cls([[0] * c for _ in range(r)])
 
+    def T(self):
+        return Matrix([[e for e in self.col_vector(i)]
+                       for i in range(self.col_num())])
+
     def __add__(self, another):
         """
         返回两个矩阵的加法结果
