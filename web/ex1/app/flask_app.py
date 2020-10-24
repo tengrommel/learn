@@ -4,7 +4,7 @@ from PIL import Image
 import imageio
 from tensorflow.keras.models import model_from_json
 import tensorflow as tf
-from tensorflow.keras.preprocessing import image
+from tensorflow.keras.preprocessing.image import img_to_array, load_img
 import re
 import base64
 # The base64 module is needed to decode the string and then the file is saved as image.png
@@ -23,9 +23,15 @@ app = Flask(__name__)
 # We might sometimes get images in the form of base64 encoded strings
 # if the user makes an image POST request with a suitable setting.
 def convert_image(img_data):
-    # img_str = re.search(r'base64,(.*)', str(img_data)).group(1)
+    img_str = re.search(r'base64,(.*)', str(img_data)).group(1)
     with open('output.png', 'wb') as output:
-        output.write(base64.b64decode(img_data))
+        output.write(base64.b64decode(img_str))
+
+
+def parse_image(img_data):
+    img_str = re.search(b'base64,(.*)', img_data).group(1)
+    with open('./output.png', 'wb') as output:
+        output.write(base64.decodebytes(img_str))
 
 
 @app.route("/")
@@ -37,10 +43,12 @@ def index():
 def predict():
     global model, graph
     img_data = request.get_data()
-    convert_image(img_data)
-    x = imageio.imread('output.png')
-    x = Image.fromarray(x).resize((28, 28))
-    x = np.reshape(x, (1, 28, 28, 1))
+    parse_image(img_data)
+    x = img_to_array(load_img('output.png', target_size=(28, 28), color_mode="grayscale")) / 255.
+    x = np.expand_dims(x, axis=0)
+    # x = imageio.imread('output.png')
+    # x = Image.fromarray(x).resize((28, 28))
+    # x = np.reshape(x, (1, 28, 28, 1))
     with graph.as_default():
         # perform the prediction
         out = model.predict(x)
