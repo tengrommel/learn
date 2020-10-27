@@ -67,3 +67,27 @@ One way to find out if our assumptions are correct is to train our model with an
 
 Let's analyze three approaches that are commonly used to obtain these insights.
 
+# Feature importance
+> The importance of each feature of a dataset can be established by using this method.
+
+Feature importance provides a score for each feature in a dataset. A higher score means the feature has more importance or relation to the output feature. 
+
+Feature importance is normally an inbuilt class that comes with Tree-Based Classifiers. In the following example, we use the Extra Tree Classifier to determine the top five features in a dataset:
+    
+    import pandas as pd
+    from sklearn.ensemble import ExtraTreesClassifier
+    import numpy as np
+    import matplotlib.pyplot as plt
+    data = pd.read_csv("train.csv")
+    X = data.iloc[:,0:20] 
+    # independent columns
+    y = data.iloc[:,-1] 
+    # pick last column for the target feature
+    model = ExtraTreesClassifier()
+    model.fit(X,y)
+    print(model.feature_importances_) #use inbuilt class
+    # feature_importances of tree based classifiers
+    # plot graph of feature importances for better visualization
+    feat_importances = pd.Series(model.feature_importances_, index=X. columns)
+    feat_importances.nlargest(5).plot(kind='barh')
+    plt.show()
