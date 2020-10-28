@@ -91,3 +91,53 @@ Feature importance is normally an inbuilt class that comes with Tree-Based Class
     feat_importances = pd.Series(model.feature_importances_, index=X. columns)
     feat_importances.nlargest(5).plot(kind='barh')
     plt.show()
+
+# Univariate selection
+统计测试可以用来确定哪些特征与输出变量具有最强的相关性。 scikit-learn库具有一个名为SelectKBest的类，该类提供一组统计测试以选择数据集中的K个“最佳”功能。
+
+以下是对非负特征使用卡方统计检验以选择输入数据集中五个最佳特征的示例：
+
+    
+    import pandas as pd
+    import numpy as np
+    from sklearn.feature_selection import SelectKBest
+    from sklearn.feature_selection import chi2
+    data = pd.read_csv("train.csv")
+    X = data.iloc[:,0:20] #independent columns
+    y = data.iloc[:,-1] #pick last column for the target feature
+    #apply SelectKBest class to extract top 5 best features
+    bestfeatures = SelectKBest(score_func=chi2, k=5)
+    fit = bestfeatures.fit(X,y)
+    dfscores = pd.DataFrame(fit.scores_)
+    dfcolumns = pd.DataFrame(X.columns)
+    scores = pd.concat([dfcolumns,dfscores],axis=1)
+    scores.columns = ['specs','score']
+    print(scores.nlargest(5,'score')) #print the 5 best features
+
+# Correlation heatmaps
+
+当特征的不同值之间存在关系时，两个特征之间存在关联。例如，如果房价随着平方英尺的增加而上涨，则这两个特征被认为是正相关的。可能存在不同程度的相关性。 如果一个特征相对于另一个特征一致地改变，则这些特征被认为是高度相关的。相关性可以是正的（特征的一个值的增加会增加目标变量的值）或负的（特征的一个值的增加会降低目标变量的值）。
+
+correlation是介于-1和1之间的连续值。
+- 如果两个变量之间的相关性为1，则存在完美的直接相关性。 
+- 如果两个特征之间的相关性为-1，则存在完美的逆相关性。 
+- 如果两个要素之间的相关性为0，则两个要素之间没有相关性。
+
+通过热图，可以轻松地确定哪些功能与目标变量最相关。我们将使用以下代码使用seaborn库绘制相关要素的热图：
+
+    
+    import pandas as pd
+    import numpy as np
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    data = pd.read_csv("train.csv")
+    X = data.iloc[:,0:20] #independent columns
+    y = data.iloc[:,-1] # pick last column for the target feature
+    #get the correlations of each feature in the dataset
+    correlation_matrix = data.corr()
+    top_corr_features = correlation_matrix.index
+    plt.figure(figsize=(20,20))
+    #plot heat map
+    g=sns.heatmap(data[top_corr_features].corr(),annot=True,cmap="RdYlGn")
+
+存在更正式和不太直观的方法来自动选择特征。存在许多这些方法，并且在scikit-learn软件包中实现了许多方法。接下来提到对这些方法进行分类的一种方法。
